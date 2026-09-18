@@ -1,4 +1,4 @@
-// ESP32-S3 (M5Stack CoreS3) TOPS ベンチマーク — PIE あり / なし 比較
+// M5Stack-BenchMark: ESP32 / ESP32-S3 / ESP32-P4 TOPS ベンチマーク — PIE あり / なし 比較
 //   PIE SIMD 命令 (ee.vmulas 等) と通常の C スカラーコードで同じ処理を行い、
 //   スループット (GOPS / TOPS) と倍率を M5Unified の Display とシリアルに表示する。
 //   画面: 1 コアでの PIE / noPIE / 倍率。シリアル: 2 コア同時実行の合計も出力。

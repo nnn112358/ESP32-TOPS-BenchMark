@@ -2,14 +2,20 @@
 
 **English** | [日本語](README.ja.md)
 
-<img width="371" height="354" alt="M5Stack CoreS3 (ESP32-S3) running the benchmark" src="https://github.com/user-attachments/assets/bc77c897-39e8-48af-a035-f3671b9e509e" />
-<img width="710" height="525" alt="M5Stack Tab5 (ESP32-P4) running the benchmark" src="https://github.com/user-attachments/assets/cacc7a59-4085-4a09-9829-391468d0a618" />
+> How many TOPS does an ESP32 really have? A vkpeak-style GOPS / TOPS and memory-bandwidth benchmark for
+> M5Stack boards (ESP32 / ESP32-S3 / ESP32-P4), comparing PIE SIMD against plain C.
 
-A [vkpeak](https://github.com/nihui/vkpeak)-style compute (GOPS / TOPS) and memory-bandwidth benchmark for
-M5Stack boards based on ESP32, ESP32-S3 and ESP32-P4.
-It runs the same workloads with the PIE (Processor Instruction Extensions) SIMD instructions available on
-ESP32-S3 / ESP32-P4 and with plain C code (no PIE), shows both side by side on the display via M5Unified,
-and streams the results (including a machine-readable CSV block) over serial.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bc77c897-39e8-48af-a035-f3671b9e509e" height="200" alt="M5Stack CoreS3 (ESP32-S3)">
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/cacc7a59-4085-4a09-9829-391468d0a618" height="200" alt="M5Stack Tab5 (ESP32-P4)">
+</p>
+<p align="center"><sub>M5Stack CoreS3 (ESP32-S3) &nbsp;|&nbsp; M5Stack Tab5 (ESP32-P4)</sub></p>
+
+Modeled on [vkpeak](https://github.com/nihui/vkpeak), it runs the same workloads with the PIE
+(Processor Instruction Extensions) SIMD instructions available on ESP32-S3 / ESP32-P4 and with plain C code
+(no PIE), shows both side by side on the display via M5Unified, and streams the results (including a
+machine-readable CSV block) over serial.
 
 ## Supported boards
 

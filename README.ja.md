@@ -2,13 +2,19 @@
 
 [English](README.md) | **日本語**
 
-<img width="371" height="354" alt="M5Stack CoreS3 (ESP32-S3) で実行中" src="https://github.com/user-attachments/assets/bc77c897-39e8-48af-a035-f3671b9e509e" />
-<img width="710" height="525" alt="M5Stack Tab5 (ESP32-P4) で実行中" src="https://github.com/user-attachments/assets/cacc7a59-4085-4a09-9829-391468d0a618" />
+> ESP32 は実際のところ何 TOPS なのか? M5Stack 各機種 (ESP32 / ESP32-S3 / ESP32-P4) で
+> PIE SIMD と通常の C コードを比較する vkpeak 風の GOPS / TOPS・メモリ帯域ベンチマークです。
 
-M5Stack 各機種 (ESP32 / ESP32-S3 / ESP32-P4) の演算性能 (GOPS / TOPS) とメモリ帯域を測定するベンチマークです。
-ESP32-S3 / ESP32-P4 が持つ PIE (Processor Instruction Extensions) SIMD 命令を使った場合と、
-通常の C コード (PIE なし) で同じ処理をした場合を並べて表示し、
-[vkpeak](https://github.com/nihui/vkpeak) 風の表を M5Unified の画面とシリアルに出力します。
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bc77c897-39e8-48af-a035-f3671b9e509e" height="200" alt="M5Stack CoreS3 (ESP32-S3)">
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/cacc7a59-4085-4a09-9829-391468d0a618" height="200" alt="M5Stack Tab5 (ESP32-P4)">
+</p>
+<p align="center"><sub>M5Stack CoreS3 (ESP32-S3) &nbsp;|&nbsp; M5Stack Tab5 (ESP32-P4)</sub></p>
+
+[vkpeak](https://github.com/nihui/vkpeak) をモデルに、ESP32-S3 / ESP32-P4 が持つ PIE
+(Processor Instruction Extensions) SIMD 命令を使った場合と、通常の C コード (PIE なし) で同じ処理をした場合を
+並べて表示し、結果を M5Unified の画面とシリアル (機械可読な CSV ブロック付き) に出力します。
 
 ## 対応機種
 

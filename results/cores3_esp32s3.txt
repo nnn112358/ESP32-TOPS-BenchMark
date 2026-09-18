@@ -5,16 +5,17 @@ int16-mac-reg        3.823         -     7.641         -       -  GOPS
 int8-mac-sram        2.535     0.068     4.059     0.135   37.2x  GOPS
 int16-mac-sram       1.267     0.083     2.030     0.164   15.3x  GOPS
 int8-mac-psram       0.028     0.025     0.028     0.028    1.1x  GOPS
-int8-mul-sram        0.631     0.020     1.209     0.030   31.7x  GOPS
-int16-mul-sram       0.316     0.034     0.605     0.068    9.3x  GOPS
-int8-add-sram        0.756     0.015     1.431     0.022   50.7x  GOPS
-int16-add-sram       0.378     0.026     0.716     0.053   14.3x  GOPS
+int8-mul-sram        0.631     0.020     1.210     0.030   31.7x  GOPS
+int16-mul-sram       0.316     0.034     0.605     0.067    9.3x  GOPS
+int8-add-sram        0.756     0.015     1.432     0.022   50.7x  GOPS
+int16-add-sram       0.378     0.026     0.717     0.053   14.3x  GOPS
 int32-add-sram       0.189     0.010     0.358     0.012   18.3x  GOPS
 int32-scalar             -     0.239         -     0.478       -  GOPS
 fp32-scalar              -     0.478         -     0.955       -  GFLOPS
-copy-sram           1267.0     380.9    2532.0     761.3    3.3x  MB/s
+copy-sram           1266.9     380.9    2531.9     761.3    3.3x  MB/s
 copy-sram>psram       14.5      14.5      14.6      14.5    1.0x  MB/s
-copy-psram>sram       27.4      27.1      27.8      27.8    1.0x  MB/s
+copy-psram>sram       27.4      27.1      27.9      27.8    1.0x  MB/s
 copy-psram             9.5       9.5       9.6       9.6    1.0x  MB/s
-peak PIE     = 15.28 GOPS = 0.0153 TOPS (2 cores)
-peak noPIE   = 0.48 GOPS = 0.0005 TOPS (2 cores)
+peak PIE     = 15.28 GOPS = 0.0153 TOPS (2 cores, int8-mac-reg)
+peak noPIE   = 0.48 GOPS = 0.0005 TOPS (2 cores, int32-scalar)
+DEVICE PEAK  = 15.28 GOPS = 0.0153 TOPS (PIE int8-mac-reg, 2 cores)

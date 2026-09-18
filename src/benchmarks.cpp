@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — 測定項目の定義 (PIE 版 / noPIE 版カーネルのペア)
+// ESP32-TOPS-BenchMark — 測定項目の定義 (PIE 版 / noPIE 版カーネルのペア)
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — 計測カーネルのプロトタイプと 1 イテレーションあたりの演算数
+// ESP32-TOPS-BenchMark — 計測カーネルのプロトタイプと 1 イテレーションあたりの演算数
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

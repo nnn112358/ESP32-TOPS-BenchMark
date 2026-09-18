@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — シリアル出力 (人間向けの表と PC 取得用 CSV)
+// ESP32-TOPS-BenchMark — シリアル出力 (人間向けの表と PC 取得用 CSV)
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

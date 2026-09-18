@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — 計測用バッファ (内部 SRAM / PSRAM)
+// ESP32-TOPS-BenchMark — 計測用バッファ (内部 SRAM / PSRAM)
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

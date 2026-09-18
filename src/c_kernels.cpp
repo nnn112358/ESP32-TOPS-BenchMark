@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — "PIE なし" 比較用カーネル: ごく普通の C スカラーコード (-O2)
+// ESP32-TOPS-BenchMark — "PIE なし" 比較用カーネル: ごく普通の C スカラーコード (-O2)
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

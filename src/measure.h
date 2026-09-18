@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — 計測 (キャリブレーション、1 コア / 2 コア同時実行)
+// ESP32-TOPS-BenchMark — 計測 (キャリブレーション、1 コア / 2 コア同時実行)
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

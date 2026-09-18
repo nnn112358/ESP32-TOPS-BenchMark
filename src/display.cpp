@@ -1,4 +1,4 @@
-// M5Stack-BenchMark — M5Unified 画面表示
+// ESP32-TOPS-BenchMark — M5Unified 画面表示
 // Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 // SPDX-License-Identifier: MIT
 // Developed with Claude Code (Anthropic).

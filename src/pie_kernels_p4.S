@@ -1,5 +1,5 @@
 /*
- * M5Stack-BenchMark — ESP32-P4 (RISC-V) アセンブリカーネル
+ * ESP32-TOPS-BenchMark — ESP32-P4 (RISC-V) アセンブリカーネル
  * Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
  * SPDX-License-Identifier: MIT
  * Developed with Claude Code (Anthropic).

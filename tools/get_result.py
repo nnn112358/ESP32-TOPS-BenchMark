@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# M5Stack-BenchMark — PC 側の結果取得スクリプト
+# ESP32-TOPS-BenchMark — PC 側の結果取得スクリプト
 # Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
 # SPDX-License-Identifier: MIT
 # Developed with Claude Code (Anthropic).
-"""M5Stack-BenchMark (ESP32 / ESP32-S3 / ESP32-P4) の結果をシリアル経由で PC に取得する。
+"""ESP32-TOPS-BenchMark (ESP32 / ESP32-S3 / ESP32-P4) の結果をシリアル経由で PC に取得する。
 
 使い方:
   uv run --with pyserial tools/get_result.py                  # /dev/ttyACM0 に "r" を送って測定、結果を表示

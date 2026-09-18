@@ -1,4 +1,4 @@
-# M5Stack-BenchMark
+# ESP32-TOPS-BenchMark
 
 M5Stack 各機種 (ESP32 / ESP32-S3 / ESP32-P4) の演算性能 (GOPS / TOPS) とメモリ帯域を測定するベンチマークです。
 ESP32-S3 / ESP32-P4 が持つ PIE (Processor Instruction Extensions) SIMD 命令を使った場合と、

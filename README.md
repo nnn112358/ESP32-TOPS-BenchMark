@@ -1,31 +1,31 @@
 # ESP32-TOPS-BenchMark
 
-M5Stack 各機種 (ESP32 / ESP32-S3 / ESP32-P4) の演算性能 (GOPS / TOPS) とメモリ帯域を測定するベンチマークです。
-ESP32-S3 / ESP32-P4 が持つ PIE (Processor Instruction Extensions) SIMD 命令を使った場合と、
-通常の C コード (PIE なし) で同じ処理をした場合を並べて表示し、
-[vkpeak](https://github.com/nihui/vkpeak) 風の表を M5Unified の画面とシリアルに出力します。
+**English** | [日本語](README.ja.md)
 
-*A vkpeak-style compute / memory-bandwidth benchmark for M5Stack boards (ESP32, ESP32-S3, ESP32-P4).
-Measures PIE SIMD vs plain C throughput, shows results on the display via M5Unified, and streams a CSV block over serial.*
+A [vkpeak](https://github.com/nihui/vkpeak)-style compute (GOPS / TOPS) and memory-bandwidth benchmark for
+M5Stack boards based on ESP32, ESP32-S3 and ESP32-P4.
+It runs the same workloads with the PIE (Processor Instruction Extensions) SIMD instructions available on
+ESP32-S3 / ESP32-P4 and with plain C code (no PIE), shows both side by side on the display via M5Unified,
+and streams the results (including a machine-readable CSV block) over serial.
 
-## 対応機種
+## Supported boards
 
-| PlatformIO env | 機種 | CPU | PIE SIMD |
+| PlatformIO env | Board | CPU | PIE SIMD |
 |---|---|---|---|
-| `m5stack-cores3` | M5Stack CoreS3 | ESP32-S3 (Xtensa LX7, 240 MHz x2, PSRAM 8 MB) | あり (`ee.*`) |
-| `m5stack-tab5` | M5Stack Tab5 | ESP32-P4 (RISC-V, 360 MHz x2, PSRAM 32 MB) | あり (`esp.*`) |
-| `m5stack-core2` | M5Stack Core / Core2 / Fire | ESP32 (Xtensa LX6, 240 MHz x2) | なし |
+| `m5stack-cores3` | M5Stack CoreS3 | ESP32-S3 (Xtensa LX7, 240 MHz x2, 8 MB PSRAM) | yes (`ee.*`) |
+| `m5stack-tab5` | M5Stack Tab5 | ESP32-P4 (RISC-V, 360 MHz x2, 32 MB PSRAM) | yes (`esp.*`) |
+| `m5stack-core2` | M5Stack Core / Core2 / Fire | ESP32 (Xtensa LX6, 240 MHz x2) | no |
 
-- M5Unified が機種を自動判別します。PSRAM の無い機種では PSRAM を使う行をスキップします。
-- 画面は 320x240 を基準に、大きい画面 (Tab5 1280x720) では整数倍に拡大します。
+- M5Unified detects the board at runtime. Rows that need PSRAM are skipped on boards without it.
+- The layout is designed for 320x240 and scaled by an integer factor on larger displays (Tab5: 1280x720, x3).
 
-## 実測結果
+## Results
 
-1 コアの値。MAC は 2 ops (乗算 + 加算) として数えています (vkpeak や GPU ベンダの TOPS 公称値と同じ流儀)。
+Single-core values. A MAC counts as 2 ops (multiply + add), the same convention as vkpeak and GPU vendors' TOPS figures.
 
-| 項目 | Tab5 (ESP32-P4) | CoreS3 (ESP32-S3) | Core2 (ESP32) |
+| Test | Tab5 (ESP32-P4) | CoreS3 (ESP32-S3) | Core2 (ESP32) |
 |---|---|---|---|
-| int8-mac-reg (PIE 演算ピーク) | 11.46 GOPS | 7.65 GOPS | - |
+| int8-mac-reg (PIE compute peak) | 11.46 GOPS | 7.65 GOPS | - |
 | int8-mac-sram  PIE / C | 3.75 / 0.143 GOPS (26x) | 2.54 / 0.068 GOPS (37x) | - / 0.049 GOPS |
 | int16-mac-sram PIE / C | 1.88 / 0.151 GOPS (12x) | 1.27 / 0.083 GOPS (15x) | - / 0.066 GOPS |
 | int8-add-sram  PIE / C | 1.13 / 0.023 GOPS (50x) | 0.76 / 0.015 GOPS (51x) | - / 0.010 GOPS |
@@ -34,83 +34,93 @@ Measures PIE SIMD vs plain C throughput, shows results on the display via M5Unif
 | fp32-scalar (FMA) | 0.716 GFLOPS | 0.478 GFLOPS | 0.478 GFLOPS |
 | copy-sram  PIE / memcpy | 2792 / 559 MB/s | 1267 / 381 MB/s | - / 191 MB/s |
 | copy-psram | 61 MB/s | 9.5 MB/s | 9.1 MB/s |
-| **DEVICE PEAK (2 コア合計)** | **22.91 GOPS = 0.0229 TOPS** | **15.28 GOPS = 0.0153 TOPS** | **0.48 GOPS = 0.0005 TOPS** |
+| **DEVICE PEAK (2 cores)** | **22.91 GOPS = 0.0229 TOPS** | **15.28 GOPS = 0.0153 TOPS** | **0.48 GOPS = 0.0005 TOPS** |
 
-- PIE の int8 MAC 命令は 1 サイクルに 1 命令 (16 レーン) 発行でき、実測はクロック x 2 コア x 32 ops の理論値の 99% 以上です。
-  上限を決めるのはクロックだけで、Tab5 と CoreS3 の差はクロック比 (360 / 240 = 1.5 倍) そのものです。
-- SRAM 上のデータでは PIE が C の 12〜50 倍速くなります。PSRAM 上のデータは帯域 (10〜60 MB/s) が律速で PIE の効果はほぼ出ません。
-- 各機種の全結果は [`results/`](results/) にあります。参考として同じ流儀で測った PC 側の vkpeak 結果 (RTX 3070 Laptop: int8-matrix 約 155 TOPS) も置いています。
+- The PIE int8 MAC instruction issues once per cycle (16 lanes), so the measured peak is within 1% of
+  clock x 2 cores x 32 ops. The only thing that raises the ceiling is the clock: Tab5 vs CoreS3 is exactly
+  the clock ratio (360 / 240 = 1.5x).
+- On data in internal SRAM, PIE is 12-50x faster than plain C. On data in PSRAM the bandwidth
+  (10-60 MB/s) dominates and PIE barely helps.
+- Full per-board output is in [`results/`](results/), together with vkpeak results from a PC measured with
+  the same convention for reference (RTX 3070 Laptop: int8-matrix about 155 TOPS).
 
-## 測定項目
+## Tests
 
-| 項目 | 内容 | PIE 側 | noPIE 側 |
+| Test | What it does | PIE side | no-PIE side |
 |---|---|---|---|
-| int8/int16-mac-reg | レジスタのみの MAC (演算ピーク) | `vmulas.s8/s16` (S3: ACCX, P4: XACC) | - |
-| int8/int16-mac-sram | SRAM 上 8 KB + 8 KB の内積 | `vmulas.*.qacc.ld.ip` + `vld.128` | C `acc += a[i]*b[i]` |
-| int8-mac-psram | PSRAM 上 256 KB + 256 KB の内積 | 同上 | 同上 |
-| int8/int16-mul-sram | 要素毎の乗算 out = a*b | `vld`, `vmul`, `vst` | C |
-| int8/16/32-add-sram | 要素毎の飽和加算 | `vld`, `vadd(s)`, `vst` | C (clamp) |
-| int32-scalar | スカラー整数 MAC | - | `mull`/`mul` + `add` (asm) |
-| fp32-scalar | スカラー FPU FMA | - | `madd.s` / `fmadd.s` (asm) |
-| copy-* | コピー帯域 (SRAM 16 KB, PSRAM 512 KB) | `vld.128` / `vst.128` | `memcpy` |
+| int8/int16-mac-reg | register-only MAC (compute peak) | `vmulas.s8/s16` (S3: ACCX, P4: XACC) | - |
+| int8/int16-mac-sram | dot product of 8 KB + 8 KB in SRAM | `vmulas.*.qacc.ld.ip` + `vld.128` | C `acc += a[i]*b[i]` |
+| int8-mac-psram | dot product of 256 KB + 256 KB in PSRAM | same | same |
+| int8/int16-mul-sram | element-wise multiply out = a*b | `vld`, `vmul`, `vst` | C |
+| int8/16/32-add-sram | element-wise saturating add | `vld`, `vadd(s)`, `vst` | C (clamp) |
+| int32-scalar | scalar integer MAC | - | `mull`/`mul` + `add` (asm) |
+| fp32-scalar | scalar FPU FMA | - | `madd.s` / `fmadd.s` (asm) |
+| copy-* | copy bandwidth (SRAM 16 KB, PSRAM 512 KB) | `vld.128` / `vst.128` | `memcpy` |
 
-- 各項目は約 100 ms x 2 回計測して最良値を採用します。
-- 画面には 1 コアの PIE / noPIE / 倍率を、シリアルには 2 コア同時実行 (両コアで同じカーネルを走らせた合計) も出力します。
-- noPIE 側は `-O2` でコンパイルした普通の C ループです (gcc は PIE への自動ベクトル化を行いません)。
+- Each test runs for about 100 ms, twice, and the best value is kept.
+- The display shows single-core PIE / no-PIE / ratio. Serial output also includes the sum of both cores
+  running the same kernel simultaneously.
+- The no-PIE side is ordinary C compiled with `-O2` (gcc does not auto-vectorize to PIE).
 
-## ビルド・書き込み
+## Build and flash
 
-[PlatformIO](https://platformio.org/) と [pioarduino](https://github.com/pioarduino/platform-espressif32) (arduino-esp32 3.x) を使います。
-公式の `espressif32` プラットフォームは arduino-esp32 2.x で止まっており ESP32-P4 を扱えないため、`platformio.ini` で pioarduino を指定しています。
+Uses [PlatformIO](https://platformio.org/) with [pioarduino](https://github.com/pioarduino/platform-espressif32)
+(arduino-esp32 3.x). The official `espressif32` platform is stuck on arduino-esp32 2.x and cannot target the
+ESP32-P4, so `platformio.ini` points at pioarduino.
 
 ```
-pio run -e m5stack-cores3 -t upload   # CoreS3 (ESP32-S3)       /dev/ttyACM0
-pio run -e m5stack-tab5   -t upload   # Tab5 (ESP32-P4)         /dev/ttyACM0
-pio run -e m5stack-core2  -t upload   # Core/Core2/Fire (ESP32) /dev/ttyUSB0
-pio device monitor -e m5stack-cores3  # シリアルで結果を見る (115200 bps)
+pio run -e m5stack-cores3 -t upload   # CoreS3 (ESP32-S3)        /dev/ttyACM0
+pio run -e m5stack-tab5   -t upload   # Tab5 (ESP32-P4)          /dev/ttyACM0
+pio run -e m5stack-core2  -t upload   # Core/Core2/Fire (ESP32)  /dev/ttyUSB0
+pio device monitor -e m5stack-cores3  # watch the results (115200 bps)
 ```
 
-起動すると自動で測定します。画面タップ (Core/Core2 はボタン) またはシリアルに `r` を送ると再測定します。
+The benchmark runs automatically at boot. Tap the screen (or press a button on Core/Core2), or send `r`
+over serial, to run it again.
 
-## PC から結果を取得する
+## Fetching results from a PC
 
-測定後、表に続けて機械可読な CSV ブロック (`=== CSV ===` 〜 `=== END ===`) を出力します。
-付属スクリプトが `r` を送って測定させ、CSV から表を再構成して保存します。
+After each run the firmware prints the table followed by a machine-readable CSV block
+(`=== CSV ===` ... `=== END ===`). The bundled script sends `r`, waits for the block, rebuilds the table
+from the CSV and saves it.
 
 ```
 uv run --with pyserial tools/get_result.py                          # CoreS3 / Tab5 (/dev/ttyACM0)
-uv run --with pyserial tools/get_result.py -p /dev/ttyUSB0          # 無印 ESP32
+uv run --with pyserial tools/get_result.py -p /dev/ttyUSB0          # classic ESP32
 uv run --with pyserial tools/get_result.py -o result.txt --csv result.csv
-uv run --with pyserial tools/get_result.py --reset                  # リセットして起動時の測定を取得
+uv run --with pyserial tools/get_result.py --reset                  # reset the board and capture the boot run
 ```
 
-CSV の列: `chip,mhz,test,pie_1core,nopie_1core,pie_2core,nopie_2core,unit` (未対応の項目は空欄)。
+CSV columns: `chip,mhz,test,pie_1core,nopie_1core,pie_2core,nopie_2core,unit` (empty when not applicable).
 
-## ファイル構成
+## Layout
 
 ```
-platformio.ini            3 環境 (m5stack-cores3 / m5stack-tab5 / m5stack-core2)
-src/main.cpp              setup / loop と測定の進行 (各モジュールを呼ぶだけ)
-src/kernels.h             計測カーネルのプロトタイプと 1 イテレーションあたりの演算数
-src/pie_kernels.S         ESP32-S3 / ESP32 用アセンブリカーネル (Xtensa windowed ABI, loopgtz ゼロオーバーヘッドループ)
-src/pie_kernels_p4.S      ESP32-P4 用アセンブリカーネル (RISC-V, esp.lp.setup ハードウェアループ)
-src/c_kernels.cpp         noPIE 比較用の C スカラーカーネル
-src/buffers.{h,cpp}       計測用バッファ (内部 SRAM / PSRAM) の確保と初期化
-src/benchmarks.{h,cpp}    測定項目の表 (PIE 版 / noPIE 版カーネルのペア、演算数、単位) とピーク算出
-src/measure.{h,cpp}       キャリブレーションと 1 コア / 2 コア同時計測 (ワーカータスク)
-src/display.{h,cpp}       M5Unified 画面表示 (320x240 基準、大画面は整数倍)
-src/report.{h,cpp}        シリアル出力 (表 + CSV ブロック)
-tools/get_result.py       PC 側の結果取得スクリプト (pyserial)
-results/                  各機種の実測結果 (txt / csv) と PC 側 vkpeak の結果
+platformio.ini            3 environments (m5stack-cores3 / m5stack-tab5 / m5stack-core2)
+src/main.cpp              setup / loop and the run sequence (just calls the modules below)
+src/kernels.h             kernel prototypes and ops-per-iteration constants
+src/pie_kernels.S         ESP32-S3 / ESP32 assembly kernels (Xtensa windowed ABI, loopgtz zero-overhead loop)
+src/pie_kernels_p4.S      ESP32-P4 assembly kernels (RISC-V, esp.lp.setup hardware loop)
+src/c_kernels.cpp         plain C scalar kernels for the no-PIE side
+src/buffers.{h,cpp}       allocation / initialization of the SRAM and PSRAM test buffers
+src/benchmarks.{h,cpp}    the test table (PIE / no-PIE kernel pairs, ops, units) and peak calculation
+src/measure.{h,cpp}       calibration and single-core / dual-core measurement (worker task)
+src/display.{h,cpp}       M5Unified display (320x240 base, integer scaling for larger screens)
+src/report.{h,cpp}        serial output (table + CSV block)
+tools/get_result.py       PC-side result fetcher (pyserial)
+results/                  measured output per board (txt / csv) and PC vkpeak results
 ```
 
-## 実装メモ
+## Implementation notes
 
-- **S3 (Xtensa)**: PIE 命令は `ee.*`、QR レジスタ q0〜q7 はコンパイラが使わないので自由に使えます。`loopgtz` のラベルは本体の「次」の命令です。
-- **P4 (RISC-V)**: PIE 命令は `esp.*`、使える AR は a0〜a5, s0〜s1, s8〜s11, t3〜t6 のみで、`.option norvc` が必要です。
-  `esp.lp.setup` のラベルは本体の「最後」の命令で、回数 0 は自分で除外します。
-  実機 (rev1.0) では回数が大きい (数千以上) と正しく回らなかったため、外側ソフトウェアループ x 内側 256 回の構造にしています。
-- 参考資料: esp-dl の [ESP32-S3 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32s3-pie-simd/SKILL.md) /
+- **S3 (Xtensa)**: PIE instructions are `ee.*`; the QR registers q0-q7 are never used by the compiler,
+  so they are free. The `loopgtz` label is the first instruction *after* the loop body.
+- **P4 (RISC-V)**: PIE instructions are `esp.*`; only a0-a5, s0-s1, s8-s11 and t3-t6 may be used as
+  address/count registers, and `.option norvc` is required. The `esp.lp.setup` label is the *last*
+  instruction of the body and a zero count must be skipped by hand.
+  On real hardware (rev1.0) large counts (thousands or more) did not loop correctly, so the kernels use an
+  outer software loop around an inner hardware loop of 256.
+- References: esp-dl [ESP32-S3 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32s3-pie-simd/SKILL.md) /
   [ESP32-P4 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32p4-pie-simd/SKILL.md)
 
 ## Author

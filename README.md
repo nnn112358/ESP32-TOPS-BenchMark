@@ -89,14 +89,19 @@ CSV の列: `chip,mhz,test,pie_1core,nopie_1core,pie_2core,nopie_2core,unit` (�
 ## ファイル構成
 
 ```
-platformio.ini        3 環境 (m5stack-cores3 / m5stack-tab5 / m5stack-core2)
-src/main.cpp          計測ハーネス (キャリブレーション、デュアルコア実行)、M5Unified 表示、シリアル / CSV 出力
-src/bench.h           カーネルのプロトタイプと演算数の定義
-src/pie_kernels.S     ESP32-S3 / ESP32 用アセンブリカーネル (Xtensa windowed ABI, loopgtz ゼロオーバーヘッドループ)
-src/pie_kernels_p4.S  ESP32-P4 用アセンブリカーネル (RISC-V, esp.lp.setup ハードウェアループ)
-src/c_kernels.cpp     noPIE 比較用の C スカラーカーネル
-tools/get_result.py   PC 側の結果取得スクリプト (pyserial)
-results/              各機種の実測結果 (txt / csv) と PC 側 vkpeak の結果
+platformio.ini            3 環境 (m5stack-cores3 / m5stack-tab5 / m5stack-core2)
+src/main.cpp              setup / loop と測定の進行 (各モジュールを呼ぶだけ)
+src/kernels.h             計測カーネルのプロトタイプと 1 イテレーションあたりの演算数
+src/pie_kernels.S         ESP32-S3 / ESP32 用アセンブリカーネル (Xtensa windowed ABI, loopgtz ゼロオーバーヘッドループ)
+src/pie_kernels_p4.S      ESP32-P4 用アセンブリカーネル (RISC-V, esp.lp.setup ハードウェアループ)
+src/c_kernels.cpp         noPIE 比較用の C スカラーカーネル
+src/buffers.{h,cpp}       計測用バッファ (内部 SRAM / PSRAM) の確保と初期化
+src/benchmarks.{h,cpp}    測定項目の表 (PIE 版 / noPIE 版カーネルのペア、演算数、単位) とピーク算出
+src/measure.{h,cpp}       キャリブレーションと 1 コア / 2 コア同時計測 (ワーカータスク)
+src/display.{h,cpp}       M5Unified 画面表示 (320x240 基準、大画面は整数倍)
+src/report.{h,cpp}        シリアル出力 (表 + CSV ブロック)
+tools/get_result.py       PC 側の結果取得スクリプト (pyserial)
+results/                  各機種の実測結果 (txt / csv) と PC 側 vkpeak の結果
 ```
 
 ## 実装メモ
@@ -108,6 +113,11 @@ results/              各機種の実測結果 (txt / csv) と PC 側 vkpeak の
 - 参考資料: esp-dl の [ESP32-S3 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32s3-pie-simd/SKILL.md) /
   [ESP32-P4 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32p4-pie-simd/SKILL.md)
 
+## Author
+
+- nnn112358 (<https://github.com/nnn112358>)
+- Developed with Claude Code (Anthropic)
+
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE)

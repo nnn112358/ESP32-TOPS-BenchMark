@@ -1,4 +1,9 @@
 /*
+ * M5Stack-BenchMark — ESP32-P4 (RISC-V) アセンブリカーネル
+ * Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
+ * SPDX-License-Identifier: MIT
+ * Developed with Claude Code (Anthropic).
+ *
  * ESP32-P4 PIE (Processor Instruction Extensions) SIMD benchmark kernels (RISC-V)
  *
  * S3 版 (pie_kernels.S) と同じ関数名・引数で実装し、main.cpp から共通に呼べるようにする。

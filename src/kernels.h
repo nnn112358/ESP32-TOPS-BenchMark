@@ -1,4 +1,7 @@
-// ESP32-S3 ベンチマークカーネルのプロトタイプ
+// M5Stack-BenchMark — 計測カーネルのプロトタイプと 1 イテレーションあたりの演算数
+// Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
+// SPDX-License-Identifier: MIT
+// Developed with Claude Code (Anthropic).
 //   pie_*  : PIE SIMD 命令 (pie_kernels.S = ESP32-S3, pie_kernels_p4.S = ESP32-P4) … "PIE あり"
 //   c_*    : 通常の C スカラーコード (c_kernels.cpp) … "PIE なし"
 #pragma once

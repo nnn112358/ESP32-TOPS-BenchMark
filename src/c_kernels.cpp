@@ -1,7 +1,9 @@
-// "PIE なし" の比較用カーネル: ごく普通の C スカラーコード (-O2)
-//   xtensa gcc は PIE 命令への自動ベクトル化を行わないため、
-//   SIMD を書かない場合に得られる素の性能を表す。
-#include "bench.h"
+// M5Stack-BenchMark — "PIE なし" 比較用カーネル: ごく普通の C スカラーコード (-O2)
+// Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
+// SPDX-License-Identifier: MIT
+// Developed with Claude Code (Anthropic).
+//   gcc は PIE 命令への自動ベクトル化を行わないため、SIMD を書かない場合に得られる素の性能を表す。
+#include "kernels.h"
 
 #define NOINLINE __attribute__((noinline))
 

@@ -1,4 +1,9 @@
 /*
+ * M5Stack-BenchMark — ESP32-S3 / ESP32 (Xtensa) アセンブリカーネル
+ * Copyright (c) 2026 nnn112358 <https://github.com/nnn112358>
+ * SPDX-License-Identifier: MIT
+ * Developed with Claude Code (Anthropic).
+ *
  * ESP32-S3 PIE (Processor Instruction Extensions) SIMD benchmark kernels
  *
  * Xtensa LX7 windowed ABI: a2..a7 = 引数, 戻り値 = a2, a8..a15 = 一時レジスタ

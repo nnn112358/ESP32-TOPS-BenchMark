@@ -6,9 +6,9 @@
 > PIE SIMD と通常の C コードを比較する vkpeak 風の GOPS / TOPS・メモリ帯域ベンチマークです。
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/bc77c897-39e8-48af-a035-f3671b9e509e" height="200" alt="M5Stack CoreS3 (ESP32-S3)">
+  <img src="docs/cores3_esp32s3.png" height="200" alt="M5Stack CoreS3 (ESP32-S3)">
   &nbsp;&nbsp;
-  <img src="https://github.com/user-attachments/assets/cacc7a59-4085-4a09-9829-391468d0a618" height="200" alt="M5Stack Tab5 (ESP32-P4)">
+  <img src="docs/tab5_esp32p4.png" height="200" alt="M5Stack Tab5 (ESP32-P4)">
 </p>
 <p align="center"><sub>M5Stack CoreS3 (ESP32-S3) &nbsp;|&nbsp; M5Stack Tab5 (ESP32-P4)</sub></p>
 

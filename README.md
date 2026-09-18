@@ -50,8 +50,8 @@ Single-core values. A MAC counts as 2 ops (multiply + add), the same convention 
   the clock ratio (360 / 240 = 1.5x).
 - On data in internal SRAM, PIE is 12-50x faster than plain C. On data in PSRAM the bandwidth
   (10-60 MB/s) dominates and PIE barely helps.
-- Full per-board output is in [`results/`](results/), together with vkpeak results from a PC measured with
-  the same convention for reference (RTX 3070 Laptop: int8-matrix about 155 TOPS).
+- Full per-board output is in [`results/`](results/). For scale, a laptop RTX 3070 measured with vkpeak
+  under the same convention reaches about 155 TOPS on int8 matrix (Tensor Core) work.
 
 ## Tests
 
@@ -117,7 +117,7 @@ src/measure.{h,cpp}       calibration and single-core / dual-core measurement (w
 src/display.{h,cpp}       M5Unified display (320x240 base, integer scaling for larger screens)
 src/report.{h,cpp}        serial output (table + CSV block)
 tools/get_result.py       PC-side result fetcher (pyserial)
-results/                  measured output per board (txt / csv) and PC vkpeak results
+results/                  measured output per board
 ```
 
 ## Implementation notes

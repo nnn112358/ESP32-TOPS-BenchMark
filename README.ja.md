@@ -47,7 +47,7 @@
 - PIE の int8 MAC 命令は 1 サイクルに 1 命令 (16 レーン) 発行でき、実測はクロック x 2 コア x 32 ops の理論値の 99% 以上です。
   上限を決めるのはクロックだけで、Tab5 と CoreS3 の差はクロック比 (360 / 240 = 1.5 倍) そのものです。
 - SRAM 上のデータでは PIE が C の 12〜50 倍速くなります。PSRAM 上のデータは帯域 (10〜60 MB/s) が律速で PIE の効果はほぼ出ません。
-- 各機種の全結果は [`results/`](results/) にあります。参考として同じ流儀で測った PC 側の vkpeak 結果 (RTX 3070 Laptop: int8-matrix 約 155 TOPS) も置いています。
+- 各機種の全結果は [`results/`](results/) にあります。規模感の参考として、同じ流儀で vkpeak で測ったノート PC の RTX 3070 は int8 行列 (Tensor Core) で約 155 TOPS です。
 
 ## 測定項目
 
@@ -109,7 +109,7 @@ src/measure.{h,cpp}       キャリブレーションと 1 コア / 2 コア同�
 src/display.{h,cpp}       M5Unified 画面表示 (320x240 基準、大画面は整数倍)
 src/report.{h,cpp}        シリアル出力 (表 + CSV ブロック)
 tools/get_result.py       PC 側の結果取得スクリプト (pyserial)
-results/                  各機種の実測結果 (txt / csv) と PC 側 vkpeak の結果
+results/                  各機種の実測結果
 ```
 
 ## 実装メモ

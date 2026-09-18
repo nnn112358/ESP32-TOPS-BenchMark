@@ -1,0 +1,21 @@
+device       = ESP32-P4, 360 MHz, 2 cores
+                    PIE-1c  noPIE-1c    PIE-2c  noPIE-2c   ratio  unit
+int8-mac-reg        11.463         -    22.908         -       -  GOPS
+int16-mac-reg        5.732         -    11.454         -       -  GOPS
+int8-mac-sram        3.750     0.143     6.666     0.280   26.2x  GOPS
+int16-mac-sram       1.875     0.151     3.282     0.288   12.4x  GOPS
+int8-mac-psram       0.160     0.076     0.159     0.086    2.1x  GOPS
+int8-mul-sram        1.133     0.036     2.054     0.071   31.6x  GOPS
+int16-mul-sram       0.566     0.045     1.035     0.089   12.6x  GOPS
+int8-add-sram        1.133     0.023     2.057     0.045   49.9x  GOPS
+int16-add-sram       0.566     0.028     1.039     0.055   20.4x  GOPS
+int32-add-sram       0.283     0.014     0.514     0.028   20.0x  GOPS
+int32-scalar             -     0.358         -     0.716       -  GOPS
+fp32-scalar              -     0.716         -     1.431       -  GFLOPS
+copy-sram           2792.1     559.3    3856.4     916.0    5.0x  MB/s
+copy-sram>psram      137.5     124.8     101.2      98.7    1.1x  MB/s
+copy-psram>sram      157.3     139.0     154.0     136.4    1.1x  MB/s
+copy-psram            60.9      58.9      60.5      58.3    1.0x  MB/s
+peak PIE     = 22.91 GOPS = 0.0229 TOPS (2 cores, int8-mac-reg)
+peak noPIE   = 0.72 GOPS = 0.0007 TOPS (2 cores, int32-scalar)
+DEVICE PEAK  = 22.91 GOPS = 0.0229 TOPS (PIE int8-mac-reg, 2 cores)

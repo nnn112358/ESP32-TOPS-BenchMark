@@ -205,8 +205,10 @@ static void measure(kernel_fn fn, double work, Unit unit, double* r1, double* r2
 }
 
 // ---------------- 表示 ----------------
-static const int ROW_Y0 = 44;   // 表の先頭 y
-static const int ROW_H  = 8;    // Font0 の行高
+// 320x240 を基準にしたレイアウト。大きい画面 (Tab5 1280x720 など) は整数倍に拡大する
+static int g_scale = 1;
+#define ROW_Y0 (44 * g_scale)   // 表の先頭 y
+#define ROW_H  ( 8 * g_scale)   // Font0 の行高
 
 static void fmt_val(char* buf, size_t n, double v, bool valid, Unit u) {
   if (!valid) snprintf(buf, n, "%8s", "-");
@@ -216,17 +218,21 @@ static void fmt_val(char* buf, size_t n, double v, bool valid, Unit u) {
 
 static void draw_header() {
   auto& d = M5.Display;
+  int sx = d.width() / 320, sy = d.height() / 240;
+  g_scale = (sx < sy ? sx : sy);
+  if (g_scale < 1) g_scale = 1;
+  d.setTextSize(g_scale);
   d.fillScreen(TFT_BLACK);
   d.setTextColor(TFT_WHITE, TFT_BLACK);
   d.setFont(&fonts::Font2);
   d.setCursor(0, 0);
   d.printf("%s rev%d %luMHz %s", ESP.getChipModel(), ESP.getChipRevision(),
            (unsigned long)getCpuFrequencyMhz(), HAS_PIE ? "PIE vs noPIE" : "(no PIE)");
-  d.setCursor(0, 16);
+  d.setCursor(0, 16 * g_scale);
   d.printf("1 core, PSRAM %luMB, MAC = 2 ops", (unsigned long)(ESP.getPsramSize() >> 20));
   d.setFont(&fonts::Font0);
   d.setTextColor(TFT_YELLOW, TFT_BLACK);
-  d.setCursor(0, 34);
+  d.setCursor(0, 34 * g_scale);
   d.printf("%-15s %8s %8s %7s %s", "test", "PIE", "noPIE", "ratio", "unit");
 }
 
@@ -274,7 +280,7 @@ static Peak peak_device() {   // チップ全体のピーク = PIE / noPIE の�
 static void draw_summary() {
   auto& d = M5.Display;
   Peak dev = peak_device(), n = peak_of(false);
-  int y = ROW_Y0 + N_BENCH * ROW_H + 4;
+  int y = ROW_Y0 + N_BENCH * ROW_H + 4 * g_scale;
   d.fillRect(0, y, d.width(), d.height() - y, TFT_BLACK);
   d.setFont(&fonts::Font2);
   d.setTextColor(TFT_GREEN, TFT_BLACK);
@@ -282,13 +288,13 @@ static void draw_summary() {
   d.printf("PEAK %.2f GOPS = %.4f TOPS", dev.gops, dev.gops / 1000.0);
   d.setFont(&fonts::Font0);
   d.setTextColor(TFT_WHITE, TFT_BLACK);
-  d.setCursor(0, y + 18);
+  d.setCursor(0, y + 18 * g_scale);
   d.printf("= %s %s, 2 cores", dev.kind, dev.test);
-  d.setCursor(0, y + 27);
+  d.setCursor(0, y + 27 * g_scale);
   if (HAS_PIE) d.printf("noPIE best: %.2f GOPS (%s)", n.gops, n.test);
   else         d.printf("%s has no PIE SIMD (scalar only)", ESP.getChipModel());
   d.setTextColor(TFT_DARKGREY, TFT_BLACK);
-  d.setCursor(0, y + 36);
+  d.setCursor(0, y + 36 * g_scale);
   d.print("tap screen to re-run");
 }
 

@@ -1,19 +1,27 @@
-# esp32s3_tops — M5Stack (ESP32 / ESP32-S3) TOPS ベンチマーク (PIE あり / なし)
+# esp32s3_tops — M5Stack (ESP32 / ESP32-S3 / ESP32-P4) TOPS ベンチマーク (PIE あり / なし)
 
-ESP32-S3 の PIE (Processor Instruction Extensions) SIMD 命令を使った場合と、
+ESP32-S3 / ESP32-P4 の PIE (Processor Instruction Extensions) SIMD 命令を使った場合と、
 通常の C スカラーコード (PIE なし) で同じ処理を行った場合のスループット
 (GOPS / TOPS) と倍率を測定し、vkpeak 風の表を M5Unified の画面と
 シリアル (115200bps) に表示します。
 
-無印 ESP32 (M5Stack Core / Core2 / Fire 等) でも動作します。ESP32 には PIE が
-無いので PIE 列は「-」になり、noPIE (C スカラー) の結果だけが表示されます。
-PSRAM の無い機種では PSRAM を使う行をスキップします。
+対応機種:
+
+| env | 機種 | CPU | PIE |
+|---|---|---|---|
+| `m5stack-cores3` | M5Stack CoreS3 | ESP32-S3 (Xtensa LX7, 240MHz x2) | あり (`ee.*` 命令, `src/pie_kernels.S`) |
+| `m5stack-tab5` | M5Stack Tab5 | ESP32-P4 (RISC-V, 360MHz x2) | あり (`esp.*` 命令, `src/pie_kernels_p4.S`) |
+| `m5stack-core2` | M5Stack Core / Core2 / Fire | ESP32 (Xtensa LX6, 240MHz x2) | なし (PIE 列は「-」) |
+
+PSRAM の無い機種では PSRAM を使う行をスキップします。画面は 320x240 を基準に、
+大きい画面 (Tab5 1280x720) では整数倍に拡大して表示します。
 
 ## ビルド・書き込み
 
 ```
 cd esp32s3_tops
-pio run -e m5stack-cores3 -t upload   # CoreS3 (ESP32-S3)    /dev/ttyACM0
+pio run -e m5stack-cores3 -t upload   # CoreS3 (ESP32-S3)       /dev/ttyACM0
+pio run -e m5stack-tab5   -t upload   # Tab5 (ESP32-P4)         /dev/ttyACM0
 pio run -e m5stack-core2  -t upload   # Core/Core2/Fire (ESP32) /dev/ttyUSB0
 pio device monitor -e m5stack-cores3  # シリアルで結果を見る
 ```
@@ -54,10 +62,26 @@ CSV の列: `chip,mhz,test,pie_1core,nopie_1core,pie_2core,nopie_2core,unit` (�
 
 ## ファイル
 
-- `src/pie_kernels.S` — PIE SIMD / スカラーのアセンブリカーネル (windowed ABI, `loopgtz` ゼロオーバーヘッドループ)
+- `src/pie_kernels.S` — ESP32-S3 / ESP32 用アセンブリカーネル (Xtensa windowed ABI, `loopgtz` ゼロオーバーヘッドループ)
+- `src/pie_kernels_p4.S` — ESP32-P4 用アセンブリカーネル (RISC-V, `esp.lp.setup` ハードウェアループ)。
+  実機 (rev1.0) では `esp.lp.setup` の回数が大きい (数千以上) と正しく回らなかったため、
+  外側ソフトウェアループ x 内側 256 回の構造にしている
 - `src/c_kernels.cpp` — noPIE 比較用の C スカラーカーネル
 - `src/bench.h` — カーネルのプロトタイプと演算数の定義
 - `src/main.cpp` — 計測ハーネス (キャリブレーション、デュアルコア実行)、M5Unified 表示、シリアル出力
 - `tools/get_result.py` — PC 側の結果取得スクリプト (pyserial)
 
-参考: [esp-dl ESP32-S3 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32s3-pie-simd/SKILL.md)
+## 実測結果 (results/)
+
+| 項目 (1 core) | Tab5 ESP32-P4 360MHz | CoreS3 ESP32-S3 240MHz | ESP32 240MHz |
+|---|---|---|---|
+| int8-mac-reg (PIE) | 11.46 GOPS | 7.65 GOPS | - |
+| int8-mac-sram PIE / C | 3.75 / 0.143 GOPS | 2.54 / 0.068 GOPS | - / 0.049 GOPS |
+| fp32-scalar | 0.716 GFLOPS | 0.478 GFLOPS | 0.478 GFLOPS |
+| copy-sram PIE / memcpy | 2792 / 559 MB/s | 1267 / 381 MB/s | - / 191 MB/s |
+| copy-psram | 61 MB/s | 9.5 MB/s | 9.1 MB/s |
+| DEVICE PEAK (2 cores) | 22.91 GOPS = 0.0229 TOPS | 15.28 GOPS = 0.0153 TOPS | 0.48 GOPS = 0.0005 TOPS |
+
+参考:
+- [esp-dl ESP32-S3 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32s3-pie-simd/SKILL.md)
+- [esp-dl ESP32-P4 PIE SIMD skill](https://github.com/espressif/esp-dl/blob/master/tools/agents/skills/esp32p4-pie-simd/SKILL.md)

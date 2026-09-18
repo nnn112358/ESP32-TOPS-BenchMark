@@ -8,6 +8,7 @@
  * PIE (ee.* 命令, q レジスタ) は ESP32-S3 のみ。無印 ESP32 (LX6) ではスカラー部分だけを組み立てる。
  */
 #include "sdkconfig.h"
+#if !CONFIG_IDF_TARGET_ESP32P4   /* Xtensa (ESP32 / ESP32-S3) のみ。P4 は pie_kernels_p4.S */
 
     .text
 
@@ -237,3 +238,5 @@ pie_bench_fp32_madd:
     add.s   f0, f0, f1
     rfr     a2, f0
     retw
+
+#endif /* !CONFIG_IDF_TARGET_ESP32P4 */

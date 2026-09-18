@@ -1,13 +1,13 @@
 // ESP32-S3 ベンチマークカーネルのプロトタイプ
-//   pie_*  : PIE SIMD 命令 (pie_kernels.S)   … "PIE あり"
+//   pie_*  : PIE SIMD 命令 (pie_kernels.S = ESP32-S3, pie_kernels_p4.S = ESP32-P4) … "PIE あり"
 //   c_*    : 通常の C スカラーコード (c_kernels.cpp) … "PIE なし"
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
 #include "sdkconfig.h"
 
-#if CONFIG_IDF_TARGET_ESP32S3
-#define HAS_PIE 1
+#if CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32P4
+#define HAS_PIE 1      // ESP32-S3 (Xtensa ee.*) / ESP32-P4 (RISC-V esp.*)
 #else
 #define HAS_PIE 0      // 無印 ESP32 (LX6) には PIE がない
 #endif

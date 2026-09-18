@@ -254,29 +254,39 @@ static void draw_row(int i, int state) {   // state: 0 = 未実行, 1 = 実行�
   }
 }
 
-static void peak_int8(double* pie2, double* nopie2) {
-  *pie2 = *nopie2 = 0;
+// GOPS 行の最大値 (2 コア合計) と、それを出した項目名
+struct Peak { double gops; const char* test; const char* kind; };
+static Peak peak_of(bool pie_side) {
+  Peak pk = { 0, "-", pie_side ? "PIE" : "noPIE" };
   for (int i = 0; i < N_BENCH; ++i) {
-    if (g_bench[i].unit != U_GOPS) continue;
-    if (has_pie(g_bench[i])   && g_bench[i].pie2   > *pie2)   *pie2   = g_bench[i].pie2;
-    if (has_nopie(g_bench[i]) && g_bench[i].nopie2 > *nopie2) *nopie2 = g_bench[i].nopie2;
+    const Bench& b = g_bench[i];
+    if (b.unit != U_GOPS) continue;
+    if (pie_side  && has_pie(b)   && b.pie2   > pk.gops) { pk.gops = b.pie2;   pk.test = b.name; }
+    if (!pie_side && has_nopie(b) && b.nopie2 > pk.gops) { pk.gops = b.nopie2; pk.test = b.name; }
   }
+  return pk;
+}
+static Peak peak_device() {   // チップ全体のピーク = PIE / noPIE の大きい方
+  Peak p = peak_of(true), n = peak_of(false);
+  return (p.gops >= n.gops) ? p : n;
 }
 
 static void draw_summary() {
   auto& d = M5.Display;
-  double p2, n2;
-  peak_int8(&p2, &n2);
+  Peak dev = peak_device(), n = peak_of(false);
   int y = ROW_Y0 + N_BENCH * ROW_H + 4;
   d.fillRect(0, y, d.width(), d.height() - y, TFT_BLACK);
   d.setFont(&fonts::Font2);
   d.setTextColor(TFT_GREEN, TFT_BLACK);
   d.setCursor(0, y);
-  if (HAS_PIE) d.printf("PIE   2core: %.2f GOPS = %.4f TOPS", p2, p2 / 1000.0);
-  else         d.printf("%s has no PIE SIMD", ESP.getChipModel());
-  d.setCursor(0, y + 16);
-  d.printf("noPIE 2core: %.2f GOPS = %.4f TOPS", n2, n2 / 1000.0);
+  d.printf("PEAK %.2f GOPS = %.4f TOPS", dev.gops, dev.gops / 1000.0);
   d.setFont(&fonts::Font0);
+  d.setTextColor(TFT_WHITE, TFT_BLACK);
+  d.setCursor(0, y + 18);
+  d.printf("= %s %s, 2 cores", dev.kind, dev.test);
+  d.setCursor(0, y + 27);
+  if (HAS_PIE) d.printf("noPIE best: %.2f GOPS (%s)", n.gops, n.test);
+  else         d.printf("%s has no PIE SIMD (scalar only)", ESP.getChipModel());
   d.setTextColor(TFT_DARKGREY, TFT_BLACK);
   d.setCursor(0, y + 36);
   d.print("tap screen to re-run");
@@ -342,11 +352,11 @@ static void run_all() {
   }
   draw_summary();
 
-  double p2, n2;
-  peak_int8(&p2, &n2);
-  if (HAS_PIE) Serial.printf("peak PIE     = %.2f GOPS = %.4f TOPS (2 cores)\n", p2, p2 / 1000.0);
+  Peak p = peak_of(true), n = peak_of(false), dev = peak_device();
+  if (HAS_PIE) Serial.printf("peak PIE     = %.2f GOPS = %.4f TOPS (2 cores, %s)\n", p.gops, p.gops / 1000.0, p.test);
   else         Serial.printf("peak PIE     = n/a (%s has no PIE)\n", ESP.getChipModel());
-  Serial.printf("peak noPIE   = %.2f GOPS = %.4f TOPS (2 cores)\n", n2, n2 / 1000.0);
+  Serial.printf("peak noPIE   = %.2f GOPS = %.4f TOPS (2 cores, %s)\n", n.gops, n.gops / 1000.0, n.test);
+  Serial.printf("DEVICE PEAK  = %.2f GOPS = %.4f TOPS (%s %s, 2 cores)\n", dev.gops, dev.gops / 1000.0, dev.kind, dev.test);
 
   // 機械可読な CSV (tools/get_result.py が === CSV === ～ === END === を取り込む)
   Serial.println("=== CSV ===");

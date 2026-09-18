@@ -12,9 +12,10 @@ int16-add-sram           -     0.016         -     0.032       -  GOPS
 int32-add-sram           -     0.009         -     0.017       -  GOPS
 int32-scalar             -     0.239         -     0.478       -  GOPS
 fp32-scalar              -     0.478         -     0.956       -  GFLOPS
-copy-sram                -     190.9         -     380.2       -  MB/s
+copy-sram                -     190.9         -     380.3       -  MB/s
 copy-sram>psram          -      13.5         -      14.4       -  MB/s
 copy-psram>sram          -      24.3         -      26.7       -  MB/s
 copy-psram               -       9.1         -       9.6       -  MB/s
 peak PIE     = n/a (ESP32-D0WDQ6-V3 has no PIE)
-peak noPIE   = 0.48 GOPS = 0.0005 TOPS (2 cores)
+peak noPIE   = 0.48 GOPS = 0.0005 TOPS (2 cores, int32-scalar)
+DEVICE PEAK  = 0.48 GOPS = 0.0005 TOPS (noPIE int32-scalar, 2 cores)

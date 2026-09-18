@@ -54,17 +54,22 @@ def build_table(rows: list[dict]) -> str:
     out = [f"device       = {chip}, {mhz} MHz, 2 cores",
            f"{'':16s} {'PIE-1c':>9s} {'noPIE-1c':>9s} {'PIE-2c':>9s} {'noPIE-2c':>9s} {'ratio':>7s}  unit"]
     peak_pie = peak_nopie = 0.0
+    test_pie = test_nopie = "-"
     for r in rows:
         u = r["unit"]
         p1, n1, p2, n2 = (r["pie_1core"], r["nopie_1core"], r["pie_2core"], r["nopie_2core"])
         ratio = f"{float(p1) / float(n1):6.1f}x" if p1 and n1 and float(n1) > 0 else f"{'-':>7s}"
         out.append(f"{r['test']:16s} {fmt(p1, u):>9s} {fmt(n1, u):>9s} {fmt(p2, u):>9s} {fmt(n2, u):>9s} {ratio}  {u}")
         if u == "GOPS":
-            peak_pie = max(peak_pie, float(p2 or 0))
-            peak_nopie = max(peak_nopie, float(n2 or 0))
-    out.append(f"peak PIE     = {peak_pie:.2f} GOPS = {peak_pie / 1000:.4f} TOPS (2 cores)" if peak_pie > 0
+            if p2 and float(p2) > peak_pie:
+                peak_pie, test_pie = float(p2), r["test"]
+            if n2 and float(n2) > peak_nopie:
+                peak_nopie, test_nopie = float(n2), r["test"]
+    out.append(f"peak PIE     = {peak_pie:.2f} GOPS = {peak_pie / 1000:.4f} TOPS (2 cores, {test_pie})" if peak_pie > 0
                else f"peak PIE     = n/a ({chip} has no PIE)")
-    out.append(f"peak noPIE   = {peak_nopie:.2f} GOPS = {peak_nopie / 1000:.4f} TOPS (2 cores)")
+    out.append(f"peak noPIE   = {peak_nopie:.2f} GOPS = {peak_nopie / 1000:.4f} TOPS (2 cores, {test_nopie})")
+    dev, kind, test = ((peak_pie, "PIE", test_pie) if peak_pie >= peak_nopie else (peak_nopie, "noPIE", test_nopie))
+    out.append(f"DEVICE PEAK  = {dev:.2f} GOPS = {dev / 1000:.4f} TOPS ({kind} {test}, 2 cores)")
     return "\n".join(out)
 
 

@@ -1,0 +1,20 @@
+device       = ESP32-D0WDQ6-V3, 240 MHz, 2 cores
+                    PIE-1c  noPIE-1c    PIE-2c  noPIE-2c   ratio  unit
+int8-mac-reg             -         -         -         -       -  GOPS
+int16-mac-reg            -         -         -         -       -  GOPS
+int8-mac-sram            -     0.049         -     0.098       -  GOPS
+int16-mac-sram           -     0.066         -     0.132       -  GOPS
+int8-mac-psram           -     0.018         -     0.020       -  GOPS
+int8-mul-sram            -     0.012         -     0.024       -  GOPS
+int16-mul-sram           -     0.018         -     0.037       -  GOPS
+int8-add-sram            -     0.010         -     0.019       -  GOPS
+int16-add-sram           -     0.016         -     0.032       -  GOPS
+int32-add-sram           -     0.009         -     0.017       -  GOPS
+int32-scalar             -     0.239         -     0.478       -  GOPS
+fp32-scalar              -     0.478         -     0.956       -  GFLOPS
+copy-sram                -     190.9         -     380.2       -  MB/s
+copy-sram>psram          -      13.5         -      14.4       -  MB/s
+copy-psram>sram          -      24.3         -      26.7       -  MB/s
+copy-psram               -       9.1         -       9.6       -  MB/s
+peak PIE     = n/a (ESP32-D0WDQ6-V3 has no PIE)
+peak noPIE   = 0.48 GOPS = 0.0005 TOPS (2 cores)
